@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.problem_system.mapper.AnswerMapper">
+
+    <resultMap type="Answer" id="AnswerResult">
+        <result property="answerId"    column="answer_id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="problemId"    column="problem_id"    />
+        <result property="creationTime"    column="creation_time"    />
+        <result property="answerStatu"    column="answer_statu"    />
+        <result property="answerContent"    column="answer_content"    />
+    </resultMap>
+
+    <sql id="selectAnswerVo">
+        select answer_id,user_name answerName,  sys_user_id, problem_id, creation_time, answer_statu, answer_content from answer
+        INNER JOIN sys_user ON answer.`sys_user_id` = sys_user.user_id
+
+    </sql>
+
+    <select id="selectAnswerList" parameterType="Answer" resultMap="AnswerResult">
+        <include refid="selectAnswerVo"/>
+        <where>
+            <if test="sysUserId != null "> and sys_user_id like concat('%', #{sysUserId}, '%')</if>
+            <if test="answerName != null "> and user_name like concat('%', #{answerName}, '%')</if>
+            <if test="problemId != null "> and problem_id = #{problemId}</if>
+            <if test="creationTime != null "> and creation_time = #{creationTime}</if>
+            <if test="answerStatu != null "> and answer_statu = #{answerStatu}</if>
+            <if test="answerContent != null  and answerContent != ''"> and answer_content like concat('%', #{answerContent}, '%')</if>
+        </where>
+        order by answer_statu desc , creation_time desc
+    </select>
+
+    <select id="selectAnswerByAnswerId" parameterType="Long" resultMap="AnswerResult">
+        <include refid="selectAnswerVo"/>
+        where answer_id = #{answerId}
+    </select>
+
+    <insert id="insertAnswer" parameterType="Answer" useGeneratedKeys="true" keyProperty="answerId">
+        insert into answer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="problemId != null">problem_id,</if>
+            <if test="creationTime != null">creation_time,</if>
+            <if test="answerStatu != null">answer_statu,</if>
+            <if test="answerContent != null">answer_content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="problemId != null">#{problemId},</if>
+            <if test="creationTime != null">#{creationTime},</if>
+            <if test="answerStatu != null">#{answerStatu},</if>
+            <if test="answerContent != null">#{answerContent},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAnswer" parameterType="Answer">
+        update answer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="problemId != null">problem_id = #{problemId},</if>
+            <if test="creationTime != null">creation_time = #{creationTime},</if>
+            <if test="answerStatu != null">answer_statu = #{answerStatu},</if>
+            <if test="answerContent != null">answer_content = #{answerContent},</if>
+        </trim>
+        where answer_id = #{answerId}
+    </update>
+
+    <delete id="deleteAnswerByAnswerId" parameterType="Long">
+        delete from answer where answer_id = #{answerId}
+    </delete>
+
+    <delete id="deleteAnswerByAnswerIds" parameterType="String">
+        delete from answer where answer_id in
+        <foreach item="answerId" collection="array" open="(" separator="," close=")">
+            #{answerId}
+        </foreach>
+    </delete>
+</mapper>

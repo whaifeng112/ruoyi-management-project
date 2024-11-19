@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.problem_system.mapper.ProblemMapper">
+
+    <resultMap type="Problem" id="ProblemResult">
+        <result property="problemId"    column="problem_id"    />
+        <result property="sysUserId"    column="sys_user_id"    />
+        <result property="creationTime"    column="creation_time"    />
+        <result property="problemStatu"    column="problem_statu"    />
+        <result property="openStatu"    column="open_statu"    />
+        <result property="problemContent"    column="problem_content"    />
+    </resultMap>
+
+    <sql id="selectProblemVo">
+        select problem_id,open_statu , sys_user_id,user_name userName, creation_time, problem_statu, problem_content from problem
+        INNER JOIN sys_user ON problem.`sys_user_id` = sys_user.user_id
+    </sql>
+
+    <select id="selectProblemList" parameterType="Problem" resultMap="ProblemResult">
+        <include refid="selectProblemVo"/>
+        <where>
+            <if test="sysUserId != null "> and sys_user_id = #{sysUserId} </if>
+            <if test="creationTime != null "> and creation_time = #{creationTime}</if>
+            <if test="openStatu != null "> and open_statu = #{openStatu}</if>
+            <if test="problemContent != null  and problemContent != ''"> and problem_content like concat('%', #{problemContent}, '%')</if>
+            <if test="userName !=null and userName != ''">
+                sys_user_id in (select user_id from `sys_user` where user_name like concat('%', #{userName}, '%') )
+            </if>
+            and problem_statu = 0
+        </where>
+        order by creation_time desc
+    </select>
+
+    <select id="selectProblemByProblemId" parameterType="Long" resultMap="ProblemResult">
+        <include refid="selectProblemVo"/>
+        where problem_id = #{problemId}
+    </select>
+
+    <insert id="insertProblem" parameterType="Problem" useGeneratedKeys="true" keyProperty="problemId">
+        insert into problem
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id,</if>
+            <if test="creationTime != null">creation_time,</if>
+            <if test="problemStatu != null">problem_statu,</if>
+            <if test="problemContent != null">problem_content,</if>
+            <if test="openStatu != null">open_statu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysUserId != null">#{sysUserId},</if>
+            <if test="creationTime != null">#{creationTime},</if>
+            <if test="problemStatu != null">#{problemStatu},</if>
+            <if test="problemContent != null">#{problemContent},</if>
+            <if test="openStatu != null">#{openStatu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProblem" parameterType="Problem">
+        update problem
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysUserId != null">sys_user_id = #{sysUserId},</if>
+            <if test="creationTime != null">creation_time = #{creationTime},</if>
+            <if test="problemStatu != null">problem_statu = #{problemStatu},</if>
+            <if test="problemContent != null">problem_content = #{problemContent},</if>
+            <if test="openStatu != null">open_statu = #{openStatu},</if>
+        </trim>
+        where problem_id = #{problemId}
+    </update>
+
+    <update id="deleteProblemByProblemId" parameterType="Long">
+        update problem set(problem_statu = 1) where problem_id = #{problemId}
+    </update>
+    <update id="deleteProblemByProblemIds" parameterType="String">
+        update problem set problem_statu = 1 where problem_id in
+        <foreach item="problemId" collection="array" open="(" separator="," close=")">
+            #{problemId}
+        </foreach>
+    </update>
+</mapper>
