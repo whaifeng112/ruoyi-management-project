@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/management-project-vue/moduls/wym-project/src/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-admin/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-common/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-quartz/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-system/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-modules/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-framework/pom.xml" />
+        <option value="$PROJECT_DIR$/management-project-vue/ruoyi-generator/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+</project>
